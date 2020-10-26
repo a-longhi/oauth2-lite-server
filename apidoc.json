@@ -1,0 +1,6 @@
+{
+    "name": "oauth2-lite-server",
+    "version": "1.0.0",
+    "description": "A lite implementation of a OAuth2.0 server",
+    "url" : ""
+}

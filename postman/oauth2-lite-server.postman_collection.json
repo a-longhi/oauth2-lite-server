@@ -1,0 +1,427 @@
+{
+	"info": {
+		"_postman_id": "c028102c-9599-4966-bea0-2cc7a27c4f50",
+		"name": "oauth2-lite-server",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "List Users",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IjEyM0BnbWFpbC5jb20iLCJzY29wZSI6InJlYWQiLCJpYXQiOjE2MDM2NDQ4NDMsImV4cCI6MTYwMzczMTI0M30.NYjY1VlGecy07BKmwIl4WFizxtlUg2-SGU3Yi-yCdIU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/users",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "name",
+							"value": "{{username}}",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "{{userEmail}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "text"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/users/",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Client",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"clientId\": \"{{clientId}}\",\r\n    \"description\": \"A new application\",\r\n    \"redirectUri\": \"{{redirectUrl}}\",\r\n    \"enabledScopes\":[\r\n        \"{{readScope}}\",\r\n        \"{{listScope}}\"\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/clients/",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"clients",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Authorize",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "f43925fd-ad12-420d-8fe8-eb3fd0c2992d",
+						"exec": [
+							"function generateRandomString(length) {\r",
+							"    let result = '';\r",
+							"    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';\r",
+							"    const charactersLength = characters.length;\r",
+							"    for (let i = 0; i < length; i += 1) {\r",
+							"        result += characters.charAt(Math.floor(Math.random() * charactersLength));\r",
+							"    }\r",
+							"    return result;\r",
+							"};\r",
+							"\r",
+							"function generateCodeChallenge(codeVerifier) {\r",
+							"    return base64URL(CryptoJS.SHA256(codeVerifier))\r",
+							"}\r",
+							"\r",
+							"function base64URL(string) {\r",
+							"    return string.toString(CryptoJS.enc.Base64).replace(/=/g, '').replace(/\\+/g, '-').replace(/\\//g, '_')\r",
+							"}\r",
+							"\r",
+							"\r",
+							"let codeVerifier = generateRandomString(43);\r",
+							"let codeChallenge = generateCodeChallenge(codeVerifier);\r",
+							"let state = generateRandomString(25); // lets reuse the method\r",
+							"\r",
+							"pm.environment.set(\"codeChallenge\", codeChallenge);\r",
+							"pm.environment.set(\"codeVerifier\", codeVerifier);\r",
+							"pm.environment.set(\"state\", state);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "88e5add7-f1ca-4497-9a2c-52ad1976c225",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"followRedirects": false,
+				"disableUrlEncoding": false
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/oauth2/authorize?response_type=code&code_challenge={{codeChallenge}}&code_challenge_method=S256&client_id={{clientId}}&redirect_uri={{redirectUrl}}&scope={{readScope}}&state={{state}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"oauth2",
+						"authorize"
+					],
+					"query": [
+						{
+							"key": "response_type",
+							"value": "code"
+						},
+						{
+							"key": "code_challenge",
+							"value": "{{codeChallenge}}"
+						},
+						{
+							"key": "code_challenge_method",
+							"value": "S256"
+						},
+						{
+							"key": "client_id",
+							"value": "{{clientId}}"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "{{redirectUrl}}"
+						},
+						{
+							"key": "scope",
+							"value": "{{readScope}}"
+						},
+						{
+							"key": "state",
+							"value": "{{state}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "75e97b33-8610-4caf-ba49-a0eb8cc6167d",
+						"exec": [
+							"pm.test(\"Location is present\", function () {\r",
+							"    pm.response.to.have.header(\"Location\");\r",
+							"\r",
+							"    location = pm.response.headers.get('Location');\r",
+							"    authorizationCode = location.split(\"&code=\")[1];\r",
+							"\r",
+							"\r",
+							"    pm.environment.set(\"authorizationCode\", authorizationCode);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"followRedirects": false
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "response_type",
+							"value": "code",
+							"type": "text"
+						},
+						{
+							"key": "code_challenge",
+							"value": "{{codeChallenge}}",
+							"type": "text"
+						},
+						{
+							"key": "code_challenge_method",
+							"value": "S256",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "{{clientId}}",
+							"type": "text"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "{{redirectUrl}}",
+							"type": "text"
+						},
+						{
+							"key": "scope",
+							"value": "{{readScope}}",
+							"type": "text"
+						},
+						{
+							"key": "state",
+							"value": "{{state}}",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "{{userEmail}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseUrl}}/oauth2/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"oauth2",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d98351cd-0a40-4355-8157-eae10e2eef96",
+						"exec": [
+							"pm.test(\"Refresh token is present\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.refresh_token).to.be.not.empty;\r",
+							"\r",
+							"    pm.environment.set(\"refreshToken\", jsonData.refresh_token);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "code",
+							"value": "{{authorizationCode}}",
+							"description": "authorization code",
+							"type": "text"
+						},
+						{
+							"key": "code_verifier",
+							"value": "{{codeVerifier}}",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "{{clientId}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseUrl}}/oauth2/token",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"oauth2",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Refresh Token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "refresh_token",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "{{clientId}}",
+							"type": "text"
+						},
+						{
+							"key": "refresh_token",
+							"value": "{{refreshToken}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseUrl}}/oauth2/refresh",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"oauth2",
+						"refresh"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PKCE Flow",
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "accessToken",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IjEyM0BnbWFpbC5jb20iLCJzY29wZSI6InJlYWQiLCJpYXQiOjE2MDM2NDQ4NDMsImV4cCI6MTYwMzczMTI0M30.NYjY1VlGecy07BKmwIl4WFizxtlUg2-SGU3Yi-yCdIU",
+							"type": "string"
+						},
+						{
+							"key": "tokenType",
+							"value": "Bearer",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

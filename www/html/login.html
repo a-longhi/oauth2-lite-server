@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Login Form</title>
+    <style>
+        .login-form {
+            width: 300px;
+            margin: 0 auto;
+            font-family: Tahoma, Geneva, sans-serif;
+        }
+        .login-form h1 {
+            text-align: center;
+            color: #4d4d4d;
+            font-size: 24px;
+            padding: 20px 0 20px 0;
+        }
+        .login-form input[type="password"],
+        .login-form input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #dddddd;
+            margin-bottom: 15px;
+            box-sizing:border-box;
+        }
+        .login-form input[type="submit"] {
+            width: 100%;
+            padding: 15px;
+            background-color: #535b63;
+            border: 0;
+            box-sizing: border-box;
+            cursor: pointer;
+            font-weight: bold;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body onload="compile_post()">
+<div class="login-form">
+    <h1>Login Form</h1>
+    <p>
+        <strong>{applicationName}</strong> requires this access:
+    </p>
+    <p>
+        <strong>{scope}</strong>
+    </p>
+    <p>
+        Confirm your credentials to grant the access
+    </p>
+    <form action="/oauth2/login" method="POST" id="login-form">
+        <input type="text" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Password" required>
+
+        <input type="hidden" id="responseType" name="response_type">
+        <input type="hidden" id="clientId" name="client_id">
+        <input type="hidden" id="redirectUri" name="redirect_uri">
+        <input type="hidden" id="scope" name="scope">
+        <input type="hidden" id="state" name="state">
+        <input type="hidden" id="codeChallenge" name="code_challenge">
+        <input type="hidden" id="codeChallengeMethod" name="code_challenge_method">
+
+        <input type="submit">
+    </form>
+</div>
+<script>
+    function compile_post() {
+
+        let responseType = findGetParameter('response_type')
+        let clientId = findGetParameter('client_id')
+        let redirectUri = findGetParameter('redirect_uri')
+        let scope = findGetParameter('scope')
+        let state = findGetParameter('state')
+        let codeChallenge = findGetParameter('code_challenge')
+        let codeChallengeMethod = findGetParameter('code_challenge_method')
+
+        document.getElementById('responseType').setAttribute('value', responseType)
+        document.getElementById('clientId').setAttribute('value', clientId)
+        document.getElementById('redirectUri').setAttribute('value', redirectUri)
+        document.getElementById('scope').setAttribute('value', scope)
+        document.getElementById('state').setAttribute('value', state)
+        document.getElementById('codeChallenge').setAttribute('value', codeChallenge)
+        document.getElementById('codeChallengeMethod').setAttribute('value', codeChallengeMethod)
+    }
+
+    function findGetParameter(parameterName) {
+        let result = null,
+            tmp = [];
+        location.search
+            .substr(1)
+            .split("&")
+            .forEach(function (item) {
+                tmp = item.split("=");
+                if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+            });
+        return result;
+    }
+
+</script>
+</body>
+</html>
