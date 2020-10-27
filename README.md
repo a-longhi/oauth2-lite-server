@@ -1,10 +1,12 @@
 # oauth2-lite-server
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=a-longhi_oauth2-lite-server&metric=alert_status)](https://sonarcloud.io/dashboard?id=a-longhi_oauth2-lite-server)
+
 This project has the intention to help developers dive into how OAuth2.0 works, implementing a simple node server.
 Actually only Authorization Code Flow with Proof Key for Code Exchange (PKCE) is implemented.
 Note: not for production.
 
-### Code structure
+## Code structure
 
 - doc/
 - postman/
@@ -21,7 +23,7 @@ Note: not for production.
     - config
 - www/
 
-### Tech
+## Tech
 
 This project uses a number of open source projects to work properly:
 
@@ -32,18 +34,36 @@ This project uses a number of open source projects to work properly:
 * [apiDoc](http://apidocjs.com/) - Inline Documentation for RESTful web APIs
 * [Mocha](https://mochajs.org/) - simple, flexible, fun javascript test framework for node.js
 
-### Installation
 
-Requires [Node.js](https://nodejs.org/) (version 8 is recommended).
+## Install
+Prerequisites:
 
-You need to edit **src/config.js** and put your configuration variables.
+* [Npm](https://www.npmjs.com/)
+* [Node.js](https://nodejs.org/) - version 8 or above
 
-Install the dependencies and devDependencies and start the server.
+Install the dependencies and devDependencies:
 
 ```sh
 $ cd oauth2-lite-server
 $ npm install
-$ node www/server
+```
+
+## Run
+Prerequisites:
+* [mongoDB](https://www.mongodb.com/)
+
+
+You need to edit **src/config.js** and put your configuration variables.
+How to start the server:
+
+```sh
+$ npm start
+```
+
+How to start the server with livereload:
+
+```sh
+$ npm run live
 ```
 
 ### Testing
@@ -64,7 +84,7 @@ $ apidoc -i src/controllers
 
 ### Development
 
-Want to contribute? Great!
+Want to contribute? Great! Open your pull requests to the `develop` branch
 
 License
 ----
